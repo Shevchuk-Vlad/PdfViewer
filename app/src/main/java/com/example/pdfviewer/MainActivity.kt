@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         // Check if the activity was started with an intent
         if (intent.action == Intent.ACTION_VIEW && intent.type == "application/pdf") {
             val pdfUri = intent.data
