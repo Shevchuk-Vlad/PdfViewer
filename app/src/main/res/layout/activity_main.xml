@@ -33,19 +33,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:text="@string/pdfviewer"
                 android:layout_marginStart="24dp"
+                android:fontFamily="sans-serif"
+                android:text="@string/pdfviewer"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textStyle="italic" />
             <TextView
                 android:id="@+id/pageNumberTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:text=""
-            android:textSize="16sp"/>
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:text=""
+                android:textSize="16sp"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

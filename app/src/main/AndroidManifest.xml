@@ -25,7 +25,7 @@
             android:exported="true"
             android:documentLaunchMode="always"
             android:windowSoftInputMode="adjustPan"
-            android:configChanges="orientation|keyboardHidden">
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

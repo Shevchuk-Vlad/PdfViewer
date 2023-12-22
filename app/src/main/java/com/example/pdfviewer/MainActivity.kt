@@ -15,17 +15,23 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcher: ActivityResultLauncher<String>
     private var isFabHidden = false // Flag to track the visibility of FloatingActionButton
+    private var currentPage: Int = 0 // Track the current page
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // Initialize the ActivityResultLauncher
         launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
+                // Check if there is a saved current page from a previous instance
+                if (savedInstanceState != null) {
+                    currentPage = savedInstanceState.getInt("currentPage", 0)
+                }
+
                 binding.pdfView.fromUri(it)
+                    .defaultPage(currentPage) // Set the default page
                     .onLoad(this) // Set load complete listener
                     .onPageChange(this) // Set page change listener
                     .load()
@@ -51,6 +57,7 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
     private fun openPdfFromUri(uri: Uri) {
         // Display the PDF using the provided URI
         binding.pdfView.fromUri(uri)
+            .defaultPage(currentPage) // Set the default page
             .onLoad(this) // Set load complete listener
             .onPageChange(this) // Set page change listener
             .load()
@@ -75,6 +82,12 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
         binding.pageNumberTextView.text = pageNumberText
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        // Save the current page when the activity is about to be destroyed
+        outState.putInt("currentPage", binding.pdfView.currentPage)
+        super.onSaveInstanceState(outState)
+    }
+
     private fun hideFab() {
         if (!isFabHidden) {
             binding.floatingActionButton.hide()
@@ -89,3 +102,4 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
         }
     }
 }
+
