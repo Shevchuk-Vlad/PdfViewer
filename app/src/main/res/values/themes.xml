@@ -2,6 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PdfViewer" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
+        <item name="colorPrimary">@color/light_violet</item>
+        <item name="colorPrimaryVariant">@color/light_pink</item>
+        <item name="colorPrimaryDark">@color/light_violet</item>
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 

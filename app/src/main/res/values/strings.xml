@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PdfViewer</string>
+    <string name="fab_content_description">Add</string>
+    <string name="pdfviewer">PdfViewer</string>
 </resources>
