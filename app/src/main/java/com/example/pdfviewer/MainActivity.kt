@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pdfviewer.databinding.ActivityMainBinding
+import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener
 
@@ -22,6 +23,11 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val pdfView: PDFView = findViewById(R.id.pdfView)
+        val pdfPath = "application.pdf"
+        val selectedPageNumber = 2
+
+        displayPdfPage(pdfView, pdfPath, selectedPageNumber)
         // Initialize the ActivityResultLauncher
         launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
@@ -99,6 +105,24 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
         if (isFabHidden) {
             binding.floatingActionButton.show()
             isFabHidden = false
+        }
+    }
+    private fun displayPdfPage(pdfView: PDFView, pdfPath: String, pageNumber: Int) {
+        try {
+            // Set the PDF file path
+            pdfView.fromAsset(pdfPath)
+                .pages(pageNumber - 1) // Adjust to 0-based index
+                .enableSwipe(true)
+                .swipeHorizontal(false)
+                .enableDoubletap(true)
+                .defaultPage(pageNumber - 1) // Adjust to 0-based index
+                .onLoad {
+                    // Do something on PDF load, if needed
+                }
+                .load()
+        } catch (e: Exception) {
+            // Handle exception
+            e.printStackTrace()
         }
     }
 }

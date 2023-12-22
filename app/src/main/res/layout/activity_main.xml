@@ -53,6 +53,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -80,5 +81,13 @@
         app:shapeAppearanceOverlay="@style/FloatingActionButton.RoundedSquare"
         app:layout_anchor="@id/pdfView"
         app:layout_anchorGravity="bottom|end" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/nestedScrollView3"
+        app:layout_anchorGravity="center"
+        app:srcCompat="@drawable/__j48sw17th9jkc3ehjl0ccw" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
