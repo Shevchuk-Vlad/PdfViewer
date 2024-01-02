@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.pdfviewer"
-        minSdk = 21
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -46,8 +46,10 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.gms:play-services-instantapps:18.0.1")
+    implementation("androidx.databinding:library:3.2.0-alpha11")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation ("com.droidninja:filepicker:2.2.5")
 }

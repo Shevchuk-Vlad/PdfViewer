@@ -3,6 +3,8 @@ package com.example.pdfviewer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,57 +17,62 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var launcher: ActivityResultLauncher<String>
-    private var isFabHidden = false // Flag to track the visibility of FloatingActionButton
-    private var currentPage: Int = 0 // Track the current page
+    private var isFabHidden = false
+    private var currentPage: Int = 0
+    private var pdfPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize the background image
+        val backgroundImage: ImageView = findViewById(R.id.imageView)
+        // Set background image visibility to visible initially
+        backgroundImage.visibility = View.VISIBLE
+
         val pdfView: PDFView = findViewById(R.id.pdfView)
-        val pdfPath = "application.pdf"
         val selectedPageNumber = 2
-
-        displayPdfPage(pdfView, pdfPath, selectedPageNumber)
-        // Initialize the ActivityResultLauncher
-        launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                // Check if there is a saved current page from a previous instance
-                if (savedInstanceState != null) {
-                    currentPage = savedInstanceState.getInt("currentPage", 0)
-                }
-
-                binding.pdfView.fromUri(it)
-                    .defaultPage(currentPage) // Set the default page
-                    .onLoad(this) // Set load complete listener
-                    .onPageChange(this) // Set page change listener
-                    .load()
-
-                // Hide the FloatingActionButton when opening the PDF
-                hideFab()
-            }
-        }
 
         // Check if the activity was started with an intent
         if (intent.action == Intent.ACTION_VIEW && intent.type == "application/pdf") {
             val pdfUri = intent.data
             pdfUri?.let {
-                openPdfFromUri(it)
+                openPdfFromUri(pdfView, it, selectedPageNumber)
+                // Hide the background image when launching the PDF viewer
+                backgroundImage.visibility = View.INVISIBLE
+            }
+        } else {
+            // Handle other cases (e.g., opening PDF from internal storage, assets, etc.)
+            pdfPath = "application.pdf"
+            displayPdfPage(pdfView, pdfPath, selectedPageNumber)
+        }
+
+        // Initialize the ActivityResultLauncher
+        launcher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                // Check if there is a saved current page from a previous instance
+                currentPage = savedInstanceState?.getInt("currentPage", 0) ?: 0
+
+                // Load PDF from URI
+                openPdfFromUri(pdfView, it, currentPage)
+                // Hide the background image when launching the PDF viewer
+                backgroundImage.visibility = View.INVISIBLE
             }
         }
 
         binding.floatingActionButton.setOnClickListener {
+            // Hide the background image when launching the PDF viewer
+            backgroundImage.visibility = View.INVISIBLE
             launcher.launch("application/pdf")
         }
     }
 
-    private fun openPdfFromUri(uri: Uri) {
-        // Display the PDF using the provided URI
-        binding.pdfView.fromUri(uri)
-            .defaultPage(currentPage) // Set the default page
-            .onLoad(this) // Set load complete listener
-            .onPageChange(this) // Set page change listener
+    private fun openPdfFromUri(pdfView: PDFView, uri: Uri, pageNumber: Int) {
+        pdfView.fromUri(uri)
+            .defaultPage(pageNumber)
+            .onLoad(this)
+            .onPageChange(this)
             .load()
     }
 
@@ -74,22 +81,17 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
     }
 
     override fun onPageChanged(page: Int, pageCount: Int) {
-        // Page in the PDF has changed
         if (page == pageCount - 1) {
-            // Last page is reached, hide the FloatingActionButton
             showFab()
         } else {
-            // Not on the last page, show the FloatingActionButton
             hideFab()
         }
 
-        // Update page numbering
         val pageNumberText = "${page + 1} / $pageCount"
         binding.pageNumberTextView.text = pageNumberText
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        // Save the current page when the activity is about to be destroyed
         outState.putInt("currentPage", binding.pdfView.currentPage)
         super.onSaveInstanceState(outState)
     }
@@ -107,23 +109,24 @@ class MainActivity : AppCompatActivity(), OnLoadCompleteListener, OnPageChangeLi
             isFabHidden = false
         }
     }
-    private fun displayPdfPage(pdfView: PDFView, pdfPath: String, pageNumber: Int) {
-        try {
-            // Set the PDF file path
-            pdfView.fromAsset(pdfPath)
-                .pages(pageNumber - 1) // Adjust to 0-based index
-                .enableSwipe(true)
-                .swipeHorizontal(false)
-                .enableDoubletap(true)
-                .defaultPage(pageNumber - 1) // Adjust to 0-based index
-                .onLoad {
-                    // Do something on PDF load, if needed
-                }
-                .load()
-        } catch (e: Exception) {
-            // Handle exception
-            e.printStackTrace()
+
+    private fun displayPdfPage(pdfView: PDFView, pdfPath: String?, pageNumber: Int) {
+        pdfPath?.let {
+            try {
+                pdfView.fromAsset(it)
+                    .pages(pageNumber - 1)
+                    .enableSwipe(true)
+                    .swipeHorizontal(false)
+                    .enableDoubletap(true)
+                    .defaultPage(pageNumber - 1)
+                    .onLoad {
+                        // Do something on PDF load, if needed
+                    }
+                    .load()
+            } catch (e: Exception) {
+                // Handle exception
+                e.printStackTrace()
+            }
         }
     }
 }
-
